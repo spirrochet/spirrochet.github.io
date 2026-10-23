@@ -86,7 +86,7 @@ because it came with an explanation.
 This page exists under a rule the laboratory already uses: a finding may
 leave only if it is still true and useful with every proper noun removed.
 Rewriting a finding that way usually improves it, because the
-generalisation that survives is the part worth saying. Session records
+generalization that survives is the part worth saying. Session records
 never pass it, since their job is to name the specifics, so this page is
 written fresh from the findings rather than copied from the records.
 

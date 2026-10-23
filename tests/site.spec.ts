@@ -36,9 +36,21 @@ test('every page loads, is described, and switches to a page on the other track'
     await expect(page, `${path} has a title`).toHaveTitle(/Christopher James Kites/);
     const description = await page.locator('meta[name="description"]').getAttribute('content');
     expect(description?.length ?? 0, `${path} has a description`).toBeGreaterThan(20);
-    await expect(page.locator('footer'), `${path} states the licences`).toContainText('All rights reserved');
+    await expect(page.locator('footer'), `${path} states the licenses`).toContainText('All rights reserved');
     const text = await page.locator('body').innerText();
     expect(text, `${path} has no sentence run into the next`).not.toMatch(/[a-z][.?!][A-Z]/);
+    const glued = await page.evaluate(() =>
+      [...document.querySelectorAll('main a, main code, footer a')].flatMap((el) => {
+        const before = el.previousSibling?.textContent ?? '';
+        const after = el.nextSibling?.textContent ?? '';
+        const found = [];
+        if (/[\w.,;:!?]$/.test(before)) found.push(`"${before.slice(-12)}|${el.textContent}"`);
+        if (/^\w/.test(after)) found.push(`"${el.textContent}|${after.slice(0, 12)}"`);
+        return found;
+      }),
+    );
+    expect(glued, `${path} has no link or code glued to a neighboring word`).toEqual([]);
+    await expect(page.locator('head link[rel="license"]'), `${path} declares its license`).toHaveAttribute('href', '/licenses/');
 
     const toggle = page.locator('a[data-track-switch]');
     await expect(toggle, `${path} has one track switch`).toHaveCount(1);
@@ -119,4 +131,42 @@ test('the timelines list the experiment and the site', async ({ page }) => {
   await page.goto('/technical/timeline/');
   expect(await page.locator('#experiment ol.timeline > li').count()).toBeGreaterThanOrEqual(10);
   await expect(page.locator('#site ol.timeline > li').first()).toBeVisible();
+});
+
+test('the plain track remembers a chosen color theme', async ({ page }) => {
+  await page.goto('/');
+  const html = page.locator('html');
+  const toggle = page.locator('[data-theme-toggle]');
+  const background = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+
+  await expect(toggle).toContainText('System');
+  await expect(html).not.toHaveAttribute('data-theme', /.+/);
+  await toggle.click();
+  await expect(html).toHaveAttribute('data-theme', 'light');
+  const light = await background();
+  await toggle.click();
+  await expect(html).toHaveAttribute('data-theme', 'dark');
+  expect(await background()).not.toBe(light);
+
+  await page.goto('/journey/');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await expect(page.locator('[data-theme-toggle]')).toContainText('Dark');
+  await page.locator('[data-theme-toggle]').click();
+  await expect(page.locator('html')).not.toHaveAttribute('data-theme', /.+/);
+});
+
+test('stories link to the previous and next story', async ({ page }) => {
+  await page.goto('/stories/agent-work-tracking/');
+  await expect(page.locator('a[rel="prev"]')).toHaveCount(0);
+  await page.locator('a[rel="next"]').click();
+  await expect(page).toHaveURL(/\/stories\/when-the-agent-grades-its-own-work\/$/);
+  await expect(page.locator('a[rel="next"]')).toHaveCount(0);
+  await expect(page.locator('a[rel="prev"]')).toHaveAttribute('href', '/stories/agent-work-tracking/');
+});
+
+test('the plain footer explains the licenses on the site, not off it', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('footer a')).toHaveAttribute('href', '/licenses/');
+  await page.locator('footer a').click();
+  await expect(page.locator('h1')).toContainText('What You May Do With This Site');
 });
