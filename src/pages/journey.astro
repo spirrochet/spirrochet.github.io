@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro';
+import { milestones } from '../data/timeline';
+
+const format = (date: string) =>
+  new Date(`${date}T00:00:00Z`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+---
+
+<Base
+  title="The Journey"
+  description="How building with AI coding agents has gone so far, month by month, in plain words."
+  track="plain"
+  counterpart="/technical/timeline/"
+>
+  <h1>The Journey So Far</h1>
+  <p class="lede">
+    The experiment started in September 2026 and runs into early 2027. These are the moments that changed how I
+    work.
+  </p>
+  <ol class="timeline">
+    {milestones.map((m) => (
+      <li>
+        <time datetime={m.date}>{format(m.date)}</time>
+        <strong>{m.title}.</strong> {m.plain}
+      </li>
+    ))}
+  </ol>
+</Base>

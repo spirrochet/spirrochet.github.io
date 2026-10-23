@@ -1,0 +1,49 @@
+---
+import Base from '../../layouts/Base.astro';
+import { milestones } from '../../data/timeline';
+import { siteHistory } from '../../lib/siteHistory';
+
+const site = siteHistory();
+---
+
+<Base
+  title="Timeline"
+  description="Milestones of the agent work tracking laboratory, and this site's own history, read from its git log at build time."
+  track="technical"
+  counterpart="/journey/"
+>
+  <h1>Timeline</h1>
+
+  <section id="experiment">
+    <h2>The Experiment</h2>
+    <p>Curated from session records. Each date is the day the session that did it began.</p>
+    <ol class="timeline">
+      {milestones.map((m) => (
+        <li>
+          <time datetime={m.date}>{m.date}</time>
+          <strong>{m.title}.</strong> <span set:html={m.technical.replace(/`([^`]+)`/g, '<code>$1</code>')} />
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section id="site">
+    <h2>This Site</h2>
+    <p>
+      Generated at build time from the repository's main line: its first commit, then every merged pull request,
+      by title. Nothing here is written by hand.
+    </p>
+    {site.length ? (
+      <ol class="timeline">
+        {site.map((event) => (
+          <li>
+            <time datetime={event.date}>{event.date}</time>
+            {event.title}
+          </li>
+        ))}
+      </ol>
+    ) : (
+      <p>This build had no git history to read.</p>
+    )}
+  </section>
+</Base>

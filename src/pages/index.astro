@@ -1,21 +1,63 @@
 ---
+import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
+
+const stories = (await getCollection('stories')).sort((a, b) => a.data.order - b.data.order);
 ---
 
-<Base description="Christopher James Kites: engineering case studies.">
+<Base
+  description="Christopher James Kites: coming back to hands-on development, building with AI coding agents, and keeping a record of what actually works."
+  track="plain"
+  counterpart="/technical/"
+>
+  <p class="eyebrow">Hello. You're on the surface: the plain-language version of this site.</p>
   <h1>Christopher James Kites</h1>
-  <p>
-    I'm an engineer getting back to hands-on building, with AI coding agents
-    as collaborators. This site holds case studies of that work: what was
-    tried, what the evidence showed, and what changed because of it.
-  </p>
 
-  <h2>Case Studies</h2>
-  <ul>
-    <li>
-      <a href="/case-studies/agent-work-tracking/">Agent Work Tracking</a>:
-      a six-month laboratory that records every session with an AI coding
-      agent, to find out what actually works.
-    </li>
-  </ul>
+  <section id="about">
+    <p class="lede">
+      I'm Christopher James Kites, an engineer coming back to hands-on development after about seven years away
+      from regular coding. This time I'm building with AI coding agents as collaborators. I'm less interested in
+      what agents promise than in what actually happens when you work with one, so I keep a record of every
+      session: what I set out to do, what got done, what went wrong, and what went right. This site is where I
+      share what holds up.
+    </p>
+  </section>
+
+  <section id="what">
+    <h2>What I'm Doing</h2>
+    <p>
+      Every time I sit down with an AI agent to build something, the session gets written up. Not just the
+      wins: the boring sessions too, because you can't tell what works if you only keep the memorable ones.
+      Over time, the write-ups show patterns: where the agent can be trusted, where it needs a check, and where
+      I was the one who needed checking.
+    </p>
+    <p>
+      When a pattern holds up, it becomes a habit or an automatic check. When it doesn't, that gets written
+      down too.
+    </p>
+  </section>
+
+  <section id="stories">
+    <h2>Stories</h2>
+    <ul>
+      {stories.map((story) => (
+        <li>
+          <a href={`/stories/${story.id}/`}>{story.data.title}</a>: {story.data.description}
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section id="journey">
+    <h2>The Journey So Far</h2>
+    <p>
+      From an empty notebook in September to the habits and checks I work with now.{' '}
+      <a href="/journey/">See the journey →</a>
+    </p>
+  </section>
+
+  <p class="panel">
+    Comfortable with AI workflows and want the details? Every page has a twin, or a section, on the technical
+    side. <a href="/technical/" data-dig="down">Dig deeper ↓</a>
+  </p>
 </Base>

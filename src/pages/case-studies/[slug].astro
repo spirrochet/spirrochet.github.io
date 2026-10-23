@@ -1,0 +1,25 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const stories = await getCollection('stories');
+  const caseStudies = await getCollection('caseStudies');
+  return caseStudies.map((entry) => {
+    const twin = stories.find((story) => story.data.caseStudy === entry.id);
+    return { params: { slug: entry.id }, props: { entry, counterpart: twin ? `/stories/${twin.id}/` : '/#stories' } };
+  });
+}
+
+const { entry, counterpart } = Astro.props;
+const { Content } = await render(entry);
+const started = entry.data.started.toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+---
+
+<Base title={entry.data.title} description={entry.data.description} track="technical" counterpart={counterpart} type="article">
+  <article>
+    <p class="eyebrow">Case study · {entry.data.status} · started {started}</p>
+    <h1>{entry.data.title}</h1>
+    <Content />
+  </article>
+</Base>
