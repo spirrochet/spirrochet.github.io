@@ -1,12 +1,10 @@
 ---
-layout: ../../layouts/Base.astro
 title: Agent Work Tracking
 description: A laboratory that records every session with an AI coding agent, to learn from evidence what works.
+started: 2026-09-05
+status: in progress
+order: 1
 ---
-
-# Agent Work Tracking
-
-*A case study in progress. Started September 2026.*
 
 ## What It Is
 
@@ -94,7 +92,10 @@ written fresh from the findings rather than copied from the records.
 
 ## What Comes Next
 
-This is the first page. The laboratory runs until early 2027, with a
-monthly review of what the evidence says. Future entries will cover how the
-controls evolved, where the agent was trusted with more, and where that
-trust was pulled back.
+This was the first entry. The second, [When The Agent Grades Its Own
+Work](/case-studies/when-the-agent-grades-its-own-work/), follows one of
+these threads: what happened when agents were allowed to close their own
+work. The laboratory runs until early 2027, with a monthly review of what
+the evidence says. Future entries will cover how the controls evolved,
+where the agent was trusted with more, and where that trust was pulled
+back.

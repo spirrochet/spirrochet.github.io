@@ -1,0 +1,50 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+const caseStudies = (await getCollection('caseStudies')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Base
+  title="Technical"
+  description="The technical side: case studies of building with AI coding agents, the evidence behind them, and how this site is built."
+  track="technical"
+  counterpart="/"
+>
+  <p class="eyebrow">// you are in the deep end</p>
+  <h1>Building With Agents, From Evidence</h1>
+  <p class="lede">
+    A private laboratory records every session I run with an AI coding agent as structured, validated Markdown:
+    the goal, the plan, what changed, what it cost, the lessons, and the corrections. Findings that survive the
+    evidence become checks in code, not resolutions in prose. These pages are written fresh from the findings
+    that hold up without any of the private specifics.
+  </p>
+
+  <section id="case-studies">
+    <h2>Case Studies</h2>
+    <ul>
+      {caseStudies.map((entry) => (
+        <li>
+          <a href={`/case-studies/${entry.id}/`}>{entry.data.title}</a>: {entry.data.description}
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section id="timeline">
+    <h2>Timeline</h2>
+    <p>
+      The experiment's milestones, and this site's own history read from git.{' '}
+      <a href="/technical/timeline/">Open the timeline →</a>
+    </p>
+  </section>
+
+  <section id="site">
+    <h2>This Site</h2>
+    <p>
+      Two tracks, a track switch with a fallback rule, Playwright tests that crawl every page, a portability scan
+      of the built output, and a dev container.{' '}
+      <a href="/technical/how-this-site-is-built/">How this site is built →</a>
+    </p>
+  </section>
+</Base>

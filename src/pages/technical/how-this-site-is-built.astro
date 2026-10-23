@@ -1,0 +1,68 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+
+<Base
+  title="How This Site Is Built"
+  description="Two tracks with a fallback rule for the switch, Playwright tests that read the site as a visitor does, a portability scan, a dev container, and a pinned pipeline."
+  track="technical"
+  counterpart="/#about"
+>
+  <h1>How This Site Is Built</h1>
+  <p class="lede">
+    A static Astro site, built with an AI coding agent, under the same rules as the rest of the laboratory:
+    small steps, evidence for every claim, and checks that sit outside the agent.
+  </p>
+
+  <h2>Two Tracks, One Switch</h2>
+  <p>
+    Every page belongs to a track: the plain surface, or the technical deep end. Each page names where its
+    switch goes. If the page has a twin on the other track, the switch goes there. If it doesn't, the switch
+    goes to the section of the other track that its content belongs to, so neither track carries filler pages
+    written only to be switched to. This page is an example: it has no plain twin, so its switch goes to the
+    About section on the surface.
+  </p>
+  <p>
+    Case studies are a content collection with a schema; each plain story names its technical twin in its
+    frontmatter. The switch animates with the View Transitions API: down a layer when digging deeper, back up
+    when surfacing, and no motion at all for readers who ask for reduced motion.
+  </p>
+
+  <h2>Tests That Look At The Site Like A Visitor</h2>
+  <p>
+    The tests were written before the pages they test. Playwright builds and serves the site, then, on a
+    desktop and a phone-sized browser:
+  </p>
+  <ul>
+    <li>crawls every internal link from the home page, and checks each page loads, is described, states its licences, and has a switch that lands on the other track;</li>
+    <li>checks an unknown address returns the custom 404 page, with a 404 status;</li>
+    <li>checks a shared link carries a title, a description, and a 1200 by 630 preview image that actually loads;</li>
+    <li>clicks the switch down and back, taking screenshots on the way;</li>
+    <li>scans the built HTML for anything that must not be published: work item keys, identifiers, email addresses, money, machine names.</li>
+  </ul>
+  <p>
+    The preview image itself is rendered by the same browser, from an HTML card, so there's no image editor in
+    the toolchain.
+  </p>
+
+  <h2>A Dev Container</h2>
+  <p>
+    The toolchain is declared in the repository rather than assumed from the machine: Node.js 24, the same
+    version the pipeline uses, the Astro and Playwright editor extensions, and the dev server's port. Package
+    caches live inside the container, not in my home directory.
+  </p>
+
+  <h2>The Pipeline</h2>
+  <ul>
+    <li>Every action is pinned to a full commit SHA, with its version in a comment.</li>
+    <li>Dependabot proposes updates, after a three-day cooldown for new releases.</li>
+    <li>A pull request can merge only when the build and the tests pass.</li>
+    <li>Merge commits only: GitHub signs its own merge commits, so the main line stays verifiably signed. Rebase merging would drop the signatures.</li>
+  </ul>
+
+  <h2>Licences</h2>
+  <p>
+    The site's code is MIT. The writing and images are mine, all rights reserved. The
+    <a href="https://github.com/spirrochet/spirrochet.github.io"> repository</a> says which covers what.
+  </p>
+</Base>
