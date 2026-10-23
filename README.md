@@ -19,7 +19,8 @@ version the workflow uses, with the Astro and Playwright extensions.
 3. In the container's terminal:
 
    ```bash
-   npm run dev     # http://localhost:4321, forwarded to the host
+   npm run dev     # http://localhost:4321, forwarded to the host, with Astro's dev toolbar
+   npm run uat     # builds and serves the site as it will be live, at http://localhost:4321
    npm run build   # writes dist/
    npm test        # builds, serves, and runs the Playwright tests
    ```
@@ -50,7 +51,7 @@ npm test
 
 `npm test` runs on a desktop and a phone-sized browser. It crawls every page
 from the home page and checks each one loads, is described, states the
-licences, and has a track switch that lands on the other track. It also checks
+licenses, and has a track switch that lands on the other track. It also checks
 the 404 page, the link-preview tags and image, the favicon, the switch itself,
 the timelines, and that no sentence runs into the next. A portability scan
 reads the built HTML for anything that must not be published.
@@ -62,7 +63,8 @@ running the tests.
 
 ```text
 .devcontainer/devcontainer.json     the development container
-.github/workflows/deploy.yml        build and test on pull request; build, test, deploy on main
+.github/workflows/deploy.yml        build and test on pull request; build, test, deploy on main;
+                                    tests run in Playwright's image, whose tag matches package.json
 .github/dependabot.yml              weekly updates for actions and npm, 3-day cooldown
 src/content.config.ts               the case-study and story collections, with schemas
 src/content/case-studies/           technical track: one Markdown file per case study
@@ -95,8 +97,13 @@ Chosen and recorded here, so they are not only in GitHub's settings pages.
   merging would drop the signatures. Head branches are deleted after merge.
 - **Rules on `main`:** signed commits, a pull request, and the `build` and
   `test` checks passing.
-- **Actions:** GitHub's own actions plus `withastro/action` only, each pinned
-  to a full commit SHA with its release in a comment.
+- **Merge commit message:** the pull request's title and description, so the
+  main line's history explains itself. The site timeline reads merges by their
+  parents, so it works whatever this setting is.
+- **Actions:** GitHub's own actions only, each pinned to a full commit SHA with
+  its release in a comment; the repository requires SHA pinning. Composite
+  actions count too: `withastro/action` was dropped because it pulls in
+  third-party setup actions the policy refuses.
 
 ## Publishing Rule
 
@@ -105,10 +112,10 @@ useful with every proper noun removed. No host names, work item keys, account
 identifiers, cost figures, or third-party detail. The test suite scans the
 built output for the mechanical part of that rule.
 
-## Licence
+## License
 
 - **Code** (everything that builds and tests the site) is under the MIT
-  licence in `LICENSE`.
+  license in `LICENSE`.
 - **Writing and images** (the case studies, stories, page text, timelines, and
   the preview image) are © 2026 Christopher James Kites, all rights reserved.
-  They are not covered by the MIT licence.
+  They are not covered by the MIT license.

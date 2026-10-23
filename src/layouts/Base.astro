@@ -29,6 +29,7 @@ const home = deeper ? '/' : '/technical/';
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="license" href="/licenses/" />
     <meta property="og:site_name" content={siteName} />
     <meta property="og:type" content={type} />
     <meta property="og:title" content={title ?? siteName} />
@@ -44,6 +45,31 @@ const home = deeper ? '/' : '/technical/';
     <meta name="twitter:image" content={image} />
     <ClientRouter />
     <script is:inline>
+      // The plain track's color scheme: the reader's choice, else the system's.
+      // Applied before first paint, and again after each page swap.
+      const applyTheme = () => {
+        const theme = localStorage.getItem('theme');
+        if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
+        else delete document.documentElement.dataset.theme;
+        const label = { light: 'Light', dark: 'Dark' }[theme] ?? 'System';
+        document.querySelectorAll('[data-theme-toggle]').forEach((b) => {
+          b.textContent = `◐ ${label}`;
+          b.setAttribute('aria-label', `Color theme: ${label}. Change it.`);
+        });
+      };
+      applyTheme();
+      document.addEventListener('DOMContentLoaded', applyTheme);
+      document.addEventListener('astro:after-swap', applyTheme);
+      if (!window.themeToggleBound) {
+        window.themeToggleBound = true;
+        document.addEventListener('click', (event) => {
+          if (!event.target.closest?.('[data-theme-toggle]')) return;
+          const next = { system: 'light', light: 'dark', dark: 'system' }[localStorage.getItem('theme') ?? 'system'];
+          if (next === 'system') localStorage.removeItem('theme');
+          else localStorage.setItem('theme', next);
+          applyTheme();
+        });
+      }
       let dig = '';
       document.addEventListener('astro:before-preparation', (event) => {
         dig = event.sourceElement?.dataset?.dig ?? '';
@@ -71,6 +97,11 @@ const home = deeper ? '/' : '/technical/';
             <a href="/technical/how-this-site-is-built/">This site</a>
           </>
         )}
+        {deeper && (
+          <button type="button" class="theme-toggle" data-theme-toggle aria-label="Color theme: System. Change it.">
+            ◐ System
+          </button>
+        )}
         <a
           href={counterpart}
           class="track-switch"
@@ -87,8 +118,8 @@ const home = deeper ? '/' : '/technical/';
     </main>
     <footer>
       <p>
-        © 2026 Christopher James Kites. Writing and images: All rights reserved.
-        Site code: <a href="https://github.com/spirrochet/spirrochet.github.io/blob/main/LICENSE">MIT licence</a>.
+        © 2026 Christopher James Kites. Writing and images: All rights reserved. Site code: MIT license.{' '}
+        <a href="/licenses/">What the licenses mean</a>
       </p>
       <p>
         {deeper ? 'You are on the surface: the plain-language telling.' : 'You are in the deep end: the technical telling.'}{' '}
@@ -113,8 +144,20 @@ const home = deeper ? '/' : '/technical/';
     --rule: #e3d8c8;
     --strata: linear-gradient(90deg, #e9c9a5, #d9a77a 40%, #c98b5b 70%, #a8481f);
   }
+  html[data-track='plain'][data-theme='light'] {
+    color-scheme: light;
+  }
+  html[data-track='plain'][data-theme='dark'] {
+    color-scheme: dark;
+    --text: #ece4d8;
+    --muted: #b3a797;
+    --bg: #1d1a17;
+    --panel: #2a2520;
+    --accent: #e8935f;
+    --rule: #3e362e;
+  }
   @media (prefers-color-scheme: dark) {
-    html[data-track='plain'] {
+    html[data-track='plain']:not([data-theme='light']) {
       --text: #ece4d8;
       --muted: #b3a797;
       --bg: #1d1a17;
@@ -172,6 +215,21 @@ const home = deeper ? '/' : '/technical/';
     border-radius: 999px;
     padding: 0.15rem 0.8rem;
     white-space: nowrap;
+  }
+  .theme-toggle {
+    font: inherit;
+    font-size: 0.9rem;
+    color: var(--muted);
+    background: none;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 0.1rem 0.7rem;
+    cursor: pointer;
+  }
+  .theme-toggle:hover,
+  .theme-toggle:focus-visible {
+    color: var(--text);
+    border-color: var(--muted);
   }
   .track-switch:hover,
   .track-switch:focus-visible {

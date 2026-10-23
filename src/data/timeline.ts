@@ -90,7 +90,7 @@ export const milestones: Milestone[] = [
     title: 'An inventory of everything an agent can reach',
     plain: 'A list of every tool on my machines an agent could use, and why each one is there.',
     technical:
-      'A tool registry: each entry with its first use, the alternatives weighed, a risk class, and a licence and maintenance check read on a stated date.',
+      'A tool registry: each entry with its first use, the alternatives weighed, a risk class, and a license and maintenance check read on a stated date.',
   },
   {
     date: '2026-10-23',

@@ -34,7 +34,7 @@ import Base from '../../layouts/Base.astro';
     desktop and a phone-sized browser:
   </p>
   <ul>
-    <li>crawls every internal link from the home page, and checks each page loads, is described, states its licences, and has a switch that lands on the other track;</li>
+    <li>crawls every internal link from the home page, and checks each page loads, is described, states its licenses, and has a switch that lands on the other track;</li>
     <li>checks an unknown address returns the custom 404 page, with a 404 status;</li>
     <li>checks a shared link carries a title, a description, and a 1200 by 630 preview image that actually loads;</li>
     <li>clicks the switch down and back, taking screenshots on the way;</li>
@@ -54,15 +54,17 @@ import Base from '../../layouts/Base.astro';
 
   <h2>The Pipeline</h2>
   <ul>
-    <li>Every action is pinned to a full commit SHA, with its version in a comment.</li>
+    <li>Only GitHub's own actions run, each pinned to a full commit SHA with its version in a comment; the repository's settings refuse anything else.</li>
+    <li>The tests run in Playwright's own container image, so the browser and its libraries are not installed on every run.</li>
     <li>Dependabot proposes updates, after a three-day cooldown for new releases.</li>
     <li>A pull request can merge only when the build and the tests pass.</li>
     <li>Merge commits only: GitHub signs its own merge commits, so the main line stays verifiably signed. Rebase merging would drop the signatures.</li>
   </ul>
 
-  <h2>Licences</h2>
+  <h2 id="licenses">Licenses</h2>
   <p>
-    The site's code is MIT. The writing and images are mine, all rights reserved. The
-    <a href="https://github.com/spirrochet/spirrochet.github.io"> repository</a> says which covers what.
+    The site's code is under the <a href="https://github.com/spirrochet/spirrochet.github.io/blob/main/LICENSE">MIT license</a>.
+    The writing and images are mine, all rights reserved. Every page declares its license with a{' '}
+    <code>&lt;link rel="license"&gt;</code> pointing to <a href="/licenses/">a page that explains both</a>.
   </p>
 </Base>

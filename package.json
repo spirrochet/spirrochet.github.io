@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "test": "playwright test",
-    "og": "node scripts/render-og.mjs"
+    "og": "node scripts/render-og.mjs",
+    "uat": "astro build && astro preview"
   },
   "dependencies": {
     "astro": "^7.3.5"

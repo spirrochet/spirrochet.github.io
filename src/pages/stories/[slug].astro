@@ -3,14 +3,19 @@ import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 
 export async function getStaticPaths() {
-  const stories = await getCollection('stories');
-  return stories.map((entry) => ({
+  const stories = (await getCollection('stories')).sort((a, b) => a.data.order - b.data.order);
+  return stories.map((entry, index) => ({
     params: { slug: entry.id },
-    props: { entry, counterpart: entry.data.caseStudy ? `/case-studies/${entry.data.caseStudy}/` : '/technical/#case-studies' },
+    props: {
+      entry,
+      counterpart: entry.data.caseStudy ? `/case-studies/${entry.data.caseStudy}/` : '/technical/#case-studies',
+      previous: stories[index - 1],
+      next: stories[index + 1],
+    },
   }));
 }
 
-const { entry, counterpart } = Astro.props;
+const { entry, counterpart, previous, next } = Astro.props;
 const { Content } = await render(entry);
 ---
 
@@ -23,5 +28,24 @@ const { Content } = await render(entry);
       Want the details: the evidence, the mechanisms, what it took to learn?{' '}
       <a href={counterpart} data-dig="down">Dig deeper into this one ↓</a>
     </p>
+    <nav class="story-nav" aria-label="More stories">
+      {previous ? <a href={`/stories/${previous.id}/`} rel="prev">← {previous.data.title}</a> : <span />}
+      {next ? <a href={`/stories/${next.id}/`} rel="next">{next.data.title} →</a> : <span />}
+    </nav>
   </article>
 </Base>
+
+<style>
+  .story-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--rule);
+  }
+  .story-nav a[rel='next'] {
+    margin-left: auto;
+    text-align: right;
+  }
+</style>
