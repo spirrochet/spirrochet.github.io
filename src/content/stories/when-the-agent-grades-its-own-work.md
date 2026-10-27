@@ -1,6 +1,6 @@
 ---
 title: Who Says It's Done?
-description: An AI agent will happily tell you it's finished. Here's what I found when I checked, and what I changed.
+description: An AI agent will happily tell you it has finished a task. Here's what I found when I checked its work, and what I changed.
 caseStudy: when-the-agent-grades-its-own-work
 order: 2
 ---
@@ -23,11 +23,12 @@ What changed:
 
 - The agent can say it thinks something is finished, and show me why. Only I mark it done.
 - A second agent, one that didn't do the work, spot-checks the claims.
-- Where I could, I swapped rules for automatic checks. A rule the agent is asked to follow gets skipped
-  eventually. A check that fails the build doesn't.
+- Where I could, I swapped rules for automatic tests, which run on every change and fail when a rule is
+  broken. A rule the agent is asked to follow gets skipped eventually. A test that fails stops the change.
 
-The part I like: just today, one of those automatic checks stopped my agent from editing something it
-shouldn't have. It was confident, it had a reasonable-sounding reason, and the check said no anyway.
+The part I like: while I was building this site, one of those tests stopped my agent from editing
+something it shouldn't have. It was confident, it had a reasonable-sounding reason, and the test said no
+anyway.
 Nobody had to notice. That's the point.
 
 I'm not sure yet how far this goes. In time I'd like to trust the agent with more, but I want that trust

@@ -4,7 +4,7 @@ import { join } from 'node:path';
 
 // The publishing rule: nothing leaves that names a host, a work item, an
 // account, or a cost. A scan of the built HTML, so it checks what is served.
-const allowedKeys = /^(SHA|CVE|ISO|UTF|RFC|GHSA)-/;
+const allowedKeys = /^(SHA|CVE|CWE|ISO|UTF|RFC|GHSA)-/;
 const forbidden: [string, RegExp][] = [
   ['work item key', /\b[A-Z]{2,10}-\d{1,5}\b/g],
   ['UUID', /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi],

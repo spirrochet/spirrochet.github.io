@@ -24,6 +24,8 @@ export function siteHistory(): SiteEvent[] {
       if (index === 0) return [{ date, title: 'Repository created' }];
       if (parents.trim().split(/\s+/).length < 2) return [];
       const raw = subject.startsWith('Merge pull request') ? body.split('\n')[0] || subject : subject;
+      // Dependency updates are housekeeping, not history a reader needs.
+      if (/^(build|chore)\(deps(-dev)?\)/.test(raw)) return [];
       const title = raw.replace(/\s+\(#\d+\)$/, '').replace(/^[a-z]+(\([^)]*\))?!?:\s*/, '');
       return [{ date, title: title.charAt(0).toUpperCase() + title.slice(1) }];
     });

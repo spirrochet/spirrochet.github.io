@@ -28,7 +28,7 @@ tracker couldn't say who closed what by itself, because the agent acted through 
   worth.
 - One declined item was closed as completed, so reports counted it as delivered.
 
-Nine of the 18 were genuinely fine. That's the uncomfortable part. The work wasn't mostly bad; it was
+Nine of the 18 were genuinely fine. That's the uncomfortable part. The work wasn't mostly bad. It was
 unknowable. Nobody could tell which half was which without doing the whole review again.
 
 ## Why It Happens
@@ -62,13 +62,13 @@ Every check that held has one thing in common: it sits outside the agent.
 2. **A fresh reviewer.** Items waiting in review are spot-checked by a separate, read-only agent that
    didn't do the work. It checks that every criterion is covered and re-runs the riskiest claim. Its
    verdict is a lead for me, not a decision.
-3. **Checks in code, not rules in prose.** A written lesson didn't stop a repeat; a validator that fails
+3. **Checks in code, not rules in prose.** A written lesson didn't stop a repeat, but a validator that fails
    the build does. Each line of work also declares which files it may write, and the validator fails a
    branch that writes anywhere else.
 4. **Evidence the agent didn't produce.** A claim cites the log, a test, or the source system. The
    agent's own account of what it did is a claim like any other.
 
-## A Check Catching My Agent, Today
+## A Check Catching My Agent, While This Page Was Built
 
 While this page was being built, the agent I work with tried to correct a figure in a record that
 belongs to a different line of work. It was a reasonable thing to want, and the agent was confident. The

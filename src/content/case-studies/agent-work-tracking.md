@@ -26,8 +26,9 @@ found memorable. The sessions that stand out are the ones that went very
 badly or unusually well, so a corpus of them supports strong claims in both
 directions and honest claims in neither.
 
-So every session is recorded, including the short and boring ones. Boring
-records are the only evidence for the question that matters most: how much
+So every session is recorded, including the short and ordinary ones, where
+nothing much happens. Ordinary records are the only evidence for the
+question that matters most: how much
 of the cost of working with an agent is routine overhead, and how much is
 the occasional incident.
 
@@ -42,7 +43,7 @@ fact that was false. The lesson was accurate, specific, reviewed, and
 committed. It changed nothing.
 
 The distinction that matters is not written versus unwritten. It is
-**passive versus executing**. A passive record degrades silently; a check
+**passive versus executing**. A passive record degrades silently, while a check
 that runs fails loudly. A lesson is now only considered finished when it
 has become one of three things: an automated check, a step read at a
 forced moment such as session start, or a structural change that makes the

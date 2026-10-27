@@ -117,14 +117,9 @@ const home = deeper ? '/' : '/technical/';
       <slot />
     </main>
     <footer>
-      <p>
-        © 2026 Christopher James Kites. Writing and images: All rights reserved. Site code: MIT license.{' '}
-        <a href="/licenses/">What the licenses mean</a>
-      </p>
-      <p>
-        {deeper ? 'You are on the surface: the plain-language telling.' : 'You are in the deep end: the technical telling.'}{' '}
-        Built with Astro, tested with Playwright, hosted on GitHub Pages.
-      </p>
+      <p>© 2026 Christopher James Kites. Writing and images: All rights reserved.</p>
+      <p>Site code: MIT license. <a href="/licenses/">What the licenses mean</a></p>
+      {!deeper && <p>This page is the technical telling. Built with Astro, tested with Playwright, hosted on GitHub Pages.</p>}
     </footer>
   </body>
 </html>
