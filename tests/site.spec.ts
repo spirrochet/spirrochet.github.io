@@ -133,6 +133,12 @@ test('the timelines list the experiment and the site', async ({ page }) => {
   await expect(page.locator('#site ol.timeline > li').first()).toBeVisible();
 });
 
+test('the site timeline leaves out dependency bumps', async ({ page }) => {
+  await page.goto('/technical/timeline/');
+  const entries = await page.locator('#site ol.timeline > li').allTextContents();
+  expect(entries.filter((text) => /bump\b/i.test(text))).toEqual([]);
+});
+
 test('the plain track remembers a chosen color theme', async ({ page }) => {
   await page.goto('/');
   const html = page.locator('html');

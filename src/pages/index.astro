@@ -10,7 +10,6 @@ const stories = (await getCollection('stories')).sort((a, b) => a.data.order - b
   track="plain"
   counterpart="/technical/"
 >
-  <p class="eyebrow">Hello. You're on the surface: the plain-language version of this site.</p>
   <h1>Christopher James Kites</h1>
 
   <section id="about">
@@ -21,20 +20,52 @@ const stories = (await getCollection('stories')).sort((a, b) => a.data.order - b
       session: what I set out to do, what got done, what went wrong, and what went right. This site is where I
       share what holds up.
     </p>
+    <p>
+      My background is in information security. I studied Informatics at the University of Washington, focused on
+      information assurance and cybersecurity, and it shapes how I work with agents. The questions I keep coming back
+      to are what an agent can reach, what it actually changed, and how I'd know.
+    </p>
   </section>
 
   <section id="what">
     <h2>What I'm Doing</h2>
     <p>
       Every time I sit down with an AI agent to build something, the session gets written up. Not just the
-      wins: the boring sessions too, because you can't tell what works if you only keep the memorable ones.
-      Over time, the write-ups show patterns: where the agent can be trusted, where it needs a check, and where
-      I was the one who needed checking.
+      wins: the ordinary sessions too, the ones where nothing much happens. They're how I can see what's routine
+      from what's rare, and you can't tell what works if you only keep the memorable ones. Over time, the
+      write-ups show patterns: where the agent can be trusted, where its work needs checking, and where I was the
+      one who needed checking.
     </p>
     <p>
-      When a pattern holds up, it becomes a habit or an automatic check. When it doesn't, that gets written
-      down too.
+      When a pattern holds up, it becomes a habit, or a test that runs every time and fails if the problem comes
+      back. When it doesn't hold up, that gets written down too.
     </p>
+    <p>
+      The notebook itself stays private. What I share here are the findings that are still true and useful with
+      every name, machine, and number taken out, so you'll get the lessons without the specifics.
+    </p>
+    <p>
+      There are two reasons for starting that strict. An agent drafts most of the writing here, and a strict rule
+      leaves less room for a slip to put something private on the page. And the names of machines, accounts, and
+      setups are among the first things someone looking for a way in would collect. Leaving them out costs a reader very little. With
+      closer review, I may share more over time.
+    </p>
+  </section>
+
+  <section id="not">
+    <h2>What This Isn't</h2>
+    <ul>
+      <li>It isn't a ranking of AI models. I note which model did what, but I'm not benchmarking them.</li>
+      <li>
+        It isn't advice for everyone. It's one person's work, so what I find is true for me until someone else
+        checks it.
+      </li>
+      <li>
+        It isn't proof that anything is secure. I record the safeguards I add and what happens when they're tested,
+        but a safeguard I've written down isn't one I've proven.
+      </li>
+      <li>It isn't automation for its own sake. Nothing gets automated until the notebook shows it's worth it.</li>
+    </ul>
   </section>
 
   <section id="stories">
@@ -51,7 +82,7 @@ const stories = (await getCollection('stories')).sort((a, b) => a.data.order - b
   <section id="journey">
     <h2>The Journey So Far</h2>
     <p>
-      From an empty notebook in September to the habits and checks I work with now.{' '}
+      From an empty notebook in September 2026 to the habits and safeguards I work with now.{' '}
       <a href="/journey/">See the journey →</a>
     </p>
   </section>

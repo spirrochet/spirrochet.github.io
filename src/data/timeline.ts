@@ -19,7 +19,7 @@ export const milestones: Milestone[] = [
   {
     date: '2026-09-11',
     title: 'A lesson that did not stick becomes a check',
-    plain: 'An agent repeated a mistake I had already written a lesson about. So the lesson became an automatic check instead.',
+    plain: 'An agent repeated a mistake I had already written a lesson about. So the lesson became a test that runs every time instead.',
     technical:
       'A recorded learning failed to prevent the same false assertion one session later; the validator gained assumption checks, the first of many prose rules turned into code.',
   },
@@ -32,10 +32,10 @@ export const milestones: Milestone[] = [
   },
   {
     date: '2026-09-19',
-    title: 'Every kept change is signed by a key I hold',
-    plain: 'The agent can prepare changes, but only I can make them permanent, by touching a hardware key.',
+    title: 'Every commit is signed by a key I hold',
+    plain: 'An agent can prepare changes to my code, but only I can commit them, by touching a hardware key. Agents still act in other places, like my task tracker, which is why the other safeguards here exist.',
     technical:
-      'Commit signing and SSH through hardware security keys inside WSL. The agent never runs `git commit`; it emits the command and the owner runs it.',
+      'Commit signing and SSH through hardware security keys inside WSL. The agent never runs `git commit`; it emits the command and the owner runs it. This covers version-controlled history only: agents still write to the local machine and, through the owner’s account, to the task tracker.',
   },
   {
     date: '2026-09-26',
@@ -67,7 +67,7 @@ export const milestones: Milestone[] = [
   {
     date: '2026-10-09',
     title: 'Checking my practices against the field',
-    plain: 'Several agents researched what others recommend; I checked their claims before believing any of them.',
+    plain: 'Several agents researched what others recommend, and I checked their claims before believing any of them.',
     technical:
       'A field review: research reports from several agents, each claim verified against a primary source before it could change a practice.',
   },

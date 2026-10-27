@@ -23,7 +23,7 @@ import Base from '../../layouts/Base.astro';
     About section on the surface.
   </p>
   <p>
-    Case studies are a content collection with a schema; each plain story names its technical twin in its
+    Case studies are a content collection with a schema, and each plain story names its technical twin in its
     frontmatter. The switch animates with the View Transitions API: down a layer when digging deeper, back up
     when surfacing, and no motion at all for readers who ask for reduced motion.
   </p>
@@ -34,11 +34,13 @@ import Base from '../../layouts/Base.astro';
     desktop and a phone-sized browser:
   </p>
   <ul>
-    <li>crawls every internal link from the home page, and checks each page loads, is described, states its licenses, and has a switch that lands on the other track;</li>
-    <li>checks an unknown address returns the custom 404 page, with a 404 status;</li>
-    <li>checks a shared link carries a title, a description, and a 1200 by 630 preview image that actually loads;</li>
-    <li>clicks the switch down and back, taking screenshots on the way;</li>
-    <li>scans the built HTML for anything that must not be published: work item keys, identifiers, email addresses, money, machine names.</li>
+    <li>crawls every internal link from the home page, and checks each page loads, is described, states its licenses, and has a switch that lands on the other track</li>
+    <li>checks an unknown address returns the custom 404 page, with a 404 status</li>
+    <li>checks a shared link carries a title, a description, and a 1200 by 630 preview image that actually loads</li>
+    <li>clicks the switch down and back, taking screenshots on the way</li>
+    <li>checks the site's own timeline leaves out dependency updates</li>
+    <li>scans the built HTML for anything that must not be published: work item keys, identifiers, email addresses, money, machine names</li>
+    <li>scans it again for the parts of my writing style a machine can check: dashes, British spellings, and relative time words that go stale.</li>
   </ul>
   <p>
     The preview image itself is rendered by the same browser, from an HTML card, so there's no image editor in
@@ -54,7 +56,7 @@ import Base from '../../layouts/Base.astro';
 
   <h2>The Pipeline</h2>
   <ul>
-    <li>Only GitHub's own actions run, each pinned to a full commit SHA with its version in a comment; the repository's settings refuse anything else.</li>
+    <li>Only GitHub's own actions run, each pinned to a full commit SHA with its version in a comment. The repository's settings refuse anything else.</li>
     <li>The tests run in Playwright's own container image, so the browser and its libraries are not installed on every run.</li>
     <li>Dependabot proposes updates, after a three-day cooldown for new releases.</li>
     <li>A pull request can merge only when the build and the tests pass.</li>
