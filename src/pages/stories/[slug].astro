@@ -30,6 +30,7 @@ const { Content } = await render(entry);
     </p>
     <nav class="story-nav" aria-label="More stories">
       {previous ? <a href={`/stories/${previous.id}/`} rel="prev">← {previous.data.title}</a> : <span />}
+      {' '}
       {next ? <a href={`/stories/${next.id}/`} rel="next">{next.data.title} →</a> : <span />}
     </nav>
   </article>
