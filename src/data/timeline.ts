@@ -93,6 +93,13 @@ export const milestones: Milestone[] = [
       'A tool registry: each entry with its first use, the alternatives weighed, a risk class, and a license and maintenance check read on a stated date.',
   },
   {
+    date: '2026-10-21',
+    title: 'The inventory checked against the machines',
+    plain: 'We compared the list of tools with what was really installed. Dozens were missing from it, and a few were behind on security updates.',
+    technical:
+      'Read-only agents inventoried the Linux environment and the Windows host; the diff against the registry found 57 likely entries missing and five tools behind security releases. A registry is evidence only when reconciled.',
+  },
+  {
     date: '2026-10-23',
     title: 'Ten principles for checkable agent work',
     plain: 'A short guide for building work so that what the agent did can be checked by something other than the agent.',

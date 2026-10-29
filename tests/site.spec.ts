@@ -62,11 +62,16 @@ test('every page loads, is described, and switches to a page on the other track'
   }
 });
 
-test('the home page introduces me and links to both stories', async ({ page }) => {
+test('the home page introduces me and links to every story', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('h1')).toContainText('Christopher James Kites');
   await expect(page.locator('#about')).toContainText('seven years away from regular coding');
-  await expect(page.locator('#stories li')).toHaveCount(2);
+  await expect(page.locator('#stories li')).toHaveCount(3);
+});
+
+test('the technical index lists every case study', async ({ page }) => {
+  await page.goto('/technical/');
+  await expect(page.locator('#case-studies li')).toHaveCount(3);
 });
 
 test('an unknown path returns the custom 404 page', async ({ page }) => {
@@ -166,8 +171,10 @@ test('stories link to the previous and next story', async ({ page }) => {
   await expect(page.locator('a[rel="prev"]')).toHaveCount(0);
   await page.locator('a[rel="next"]').click();
   await expect(page).toHaveURL(/\/stories\/when-the-agent-grades-its-own-work\/$/);
-  await expect(page.locator('a[rel="next"]')).toHaveCount(0);
   await expect(page.locator('a[rel="prev"]')).toHaveAttribute('href', '/stories/agent-work-tracking/');
+  await page.locator('a[rel="next"]').click();
+  await expect(page).toHaveURL(/\/stories\/what-did-the-agent-just-install\/$/);
+  await expect(page.locator('a[rel="next"]')).toHaveCount(0);
 });
 
 test('the plain footer explains the licenses on the site, not off it', async ({ page }) => {
