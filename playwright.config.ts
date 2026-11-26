@@ -18,7 +18,10 @@ export default defineConfig({
     { name: 'mobile', use: { ...devices['Pixel 7'] } },
   ],
   webServer: {
-    command: `npm run build && npm run preview -- --host 127.0.0.1 --port ${port}`,
+    // `--ignore-lock` keeps the preview server in the foreground. Without it,
+    // Astro detaches the server when an AI coding agent runs the command, the
+    // process Playwright started exits, and the run fails before any test.
+    command: `npm run build && npm run preview -- --host 127.0.0.1 --port ${port} --ignore-lock`,
     url: `http://127.0.0.1:${port}/`,
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,

@@ -19,7 +19,7 @@ version the workflow uses, with the Astro and Playwright extensions.
 3. In the container's terminal:
 
    ```bash
-   npm run dev     # http://localhost:4321, forwarded to the host, with Astro's dev toolbar
+   npm run dev     # http://localhost:4321 on the host, with Astro's dev toolbar
    npm run uat     # builds and serves the site as it will be live, at http://localhost:4321
    npm run build   # writes dist/
    npm test        # builds, serves, and runs the Playwright tests
@@ -27,6 +27,11 @@ version the workflow uses, with the Astro and Playwright extensions.
 
 npm's cache and the test browser live inside the container, not in your home
 directory on the host.
+
+VS Code forwards port 4321 to the host. Both servers listen on 127.0.0.1, set in
+`astro.config.mjs`: the forward connects to that address, and a server listening
+on the name `localhost` can end up on the IPv6 loopback, where the forward is
+refused.
 
 ## Develop Without The Container
 
