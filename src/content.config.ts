@@ -9,7 +9,6 @@ const caseStudies = defineCollection({
     title: z.string(),
     description: z.string().min(40),
     started: z.coerce.date(),
-    status: z.enum(['in progress', 'complete']),
     order: z.number().int(),
   }),
 });

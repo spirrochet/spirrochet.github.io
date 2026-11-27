@@ -2,7 +2,6 @@
 title: When The Agent Grades Its Own Work
 description: An agent that closes its own work closes what it has not checked. What the evidence showed, and the checks that now sit outside the agent.
 started: 2026-09-27
-status: in progress
 order: 2
 ---
 

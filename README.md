@@ -8,7 +8,7 @@ Built with [Astro](https://astro.build) as a fully static site, tested with
 [Playwright](https://playwright.dev), deployed to GitHub Pages by GitHub
 Actions.
 
-## Develop In The Dev Container
+## Develop in the Dev Container
 
 The toolchain is declared in `.devcontainer/devcontainer.json`: Node.js 24, the
 version the workflow uses, with the Astro and Playwright extensions.
@@ -33,7 +33,7 @@ VS Code forwards port 4321 to the host. Both servers listen on 127.0.0.1, set in
 on the name `localhost` can end up on the IPv6 loopback, where the forward is
 refused.
 
-## Develop Without The Container
+## Develop Without the Container
 
 Requires Node.js 22.12 or later, even-numbered releases only; 24 matches CI.
 
@@ -58,8 +58,11 @@ npm test
 from the home page and checks each one loads, is described, states the
 licenses, and has a track switch that lands on the other track. It also checks
 the 404 page, the link-preview tags and image, the favicon, the switch itself,
-the timelines, and that no sentence runs into the next. A portability scan
-reads the built HTML for anything that must not be published.
+the timelines, and that no sentence runs into the next. It checks that every
+page says who wrote it, in one line at the top of the footer, and that each
+case study shows the date its file last changed. A portability scan reads the
+built HTML for anything that must not be published, and a style scan reads it
+for the parts of the writing style a machine can check.
 
 Only one `astro preview` server may run per project: stop any you started before
 running the tests.
@@ -76,7 +79,10 @@ src/content/case-studies/           technical track: one Markdown file per case 
 src/content/stories/                plain track: one Markdown file per story
 src/data/timeline.ts                the experiment's milestones, curated by hand
 src/lib/siteHistory.ts              the site's own timeline, read from git at build time
-src/layouts/Base.astro              page shell, both themes, the track switch, preview tags
+src/lib/lastUpdated.ts              when a case study's file last changed, read from git at build time
+src/layouts/Base.astro              page shell, both themes, the track switch, preview tags,
+                                    the authorship line in the footer
+src/pages/authorship.astro          who wrote what, and what my review covers
 src/pages/                          routes; /technical/ is the technical track's home
 scripts/og-card.html                the social preview card; npm run og renders it
 tests/                              Playwright tests
@@ -92,6 +98,41 @@ than to a page written only to be switched to.
 To add a case study, add a Markdown file under `src/content/case-studies/`, and
 its plain telling under `src/content/stories/` with `caseStudy` naming it.
 Both lists and the switch pick them up; the tests check the result.
+
+## Authorship
+
+An AI agent drafts most of the prose from private records, and I read all of
+it before it is published. Every page says so in the first line of its footer,
+linked to `/authorship/`, which explains what that review covers. The layout
+takes `prose="own"` for a page I wrote myself, and prints a different line.
+
+A passage quoted from me is a `blockquote` with the class `own-words` and a
+visible label, in an `.astro` page or as raw HTML in a Markdown file. It is my
+text as I wrote it: a correction to one is mine to make, never an agent's.
+The style scan skips those passages; the portability scan does not.
+
+On a page that has such a passage, a button in the header, "My words", brings
+those passages forward and sets the rest back. It is off until pressed, hidden
+where a page has none of my words, and moves nothing under reduced motion.
+
+## Dependency Updates
+
+Dependabot opens a pull request once a week for GitHub's actions and for npm
+packages, three days at the earliest after a release. The same `build` and
+`test` checks run on it as on any pull request, and it merges the same way.
+
+- **Checks pass, a minor or patch update:** read the release notes for a new
+  dependency or an install script, then merge.
+- **Out of date with `main`:** Dependabot rebases its own branch while nobody
+  else has pushed to it. A comment of `@dependabot rebase` asks for one now;
+  `@dependabot recreate` rebuilds the pull request from scratch.
+- **A Playwright update fails `test`:** expected. The tests run in Playwright's
+  own image, whose tag in `.github/workflows/deploy.yml` must match
+  `@playwright/test` in `package.json`, and Dependabot raises the package
+  alone. Update the package, the lock file, the workflow's image, and the dev
+  container's browser in one change.
+- **Not wanted:** close it with a comment. The pull request's own description
+  lists the commands Dependabot accepts for ignoring a version or a dependency.
 
 ## Repository Settings
 
