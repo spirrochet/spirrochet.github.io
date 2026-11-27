@@ -35,7 +35,7 @@ export const milestones: Milestone[] = [
     title: 'Every commit is signed by a key I hold',
     plain: 'An agent can prepare changes to my code, but only I can commit them, by touching a hardware key. Agents still act in other places, like my task tracker, which is why the other safeguards here exist.',
     technical:
-      'Commit signing and SSH through hardware security keys inside WSL. The agent never runs `git commit`; it emits the command and the owner runs it. This covers version-controlled history only: agents still write to the local machine and, through the owner’s account, to the task tracker.',
+      'Commit signing and SSH through hardware security keys inside WSL. The agent never runs `git commit`; it emits the command and I run it. This covers version-controlled history only: agents still write to the local machine and, through the owner’s account, to the task tracker.',
   },
   {
     date: '2026-09-26',
@@ -48,7 +48,7 @@ export const milestones: Milestone[] = [
     title: 'Only a person closes work',
     plain: 'The agent can say it thinks something is finished. Deciding that it is finished is my job.',
     technical:
-      'Work item lifecycle semantics: the doer moves work to review with evidence per acceptance criterion, and only the owner moves it to done.',
+      'Work item lifecycle semantics: the doer moves work to review with evidence per acceptance criterion, and only I move it to done.',
   },
   {
     date: '2026-09-30',

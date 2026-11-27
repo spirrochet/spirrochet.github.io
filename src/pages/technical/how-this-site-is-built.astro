@@ -40,7 +40,8 @@ import Base from '../../layouts/Base.astro';
     <li>clicks the switch down and back, taking screenshots on the way</li>
     <li>checks the site's own timeline leaves out dependency updates</li>
     <li>scans the built HTML for anything that must not be published: work item keys, identifiers, email addresses, money, machine names</li>
-    <li>scans it again for the parts of my writing style a machine can check: dashes, British spellings, and relative time words that go stale.</li>
+    <li>scans it again for the parts of my writing style a machine can check: dashes, British spellings, and relative time words that go stale</li>
+    <li>checks every page says who wrote it, in one line at the top of the footer, and fails on a page that doesn't.</li>
   </ul>
   <p>
     The preview image itself is rendered by the same browser, from an HTML card, so there's no image editor in
@@ -62,6 +63,23 @@ import Base from '../../layouts/Base.astro';
     <li>A pull request can merge only when the build and the tests pass.</li>
     <li>Merge commits only: GitHub signs its own merge commits, so the main line stays verifiably signed. Rebase merging would drop the signatures.</li>
   </ul>
+
+  <h2 id="authorship">Authorship</h2>
+  <p>
+    An AI agent drafts most of the prose, from my private session records, and I read all of it before it's
+    published. The layout takes one property per page, <code>prose</code>, set to <code>agent</code> by default
+    or to <code>own</code> for a page I wrote myself, and prints the matching line in the footer, linked to{' '}
+    <a href="/authorship/">a page that explains what my review covers</a>. A passage quoted from me is a{' '}
+    <code>blockquote</code> with the class <code>own-words</code> and a visible label. The style scan skips
+    those passages, since they're my voice as written; the portability scan doesn't. On a page that has any, a
+    button in the header brings them forward and steps the rest of the page back to the muted color, which
+    keeps a contrast of at least 4.5 to 1 in every theme. It moves nothing for a reader who asks for reduced
+    motion, and it's off until asked for.
+  </p>
+  <p>
+    The wording says "reviewed", not "checked", on purpose: I read everything and decide to publish it, and I
+    don't re-verify each fact or number by hand. No page of my own prose exists yet.
+  </p>
 
   <h2 id="licenses">Licenses</h2>
   <p>

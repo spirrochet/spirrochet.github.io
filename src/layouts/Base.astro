@@ -9,9 +9,13 @@ interface Props {
   // it has none, the section of the other track that its content belongs to.
   counterpart: string;
   type?: 'website' | 'article';
+  // Who wrote the page's prose: an AI agent's draft that I reviewed, the
+  // default, or my own words throughout. The footer says which.
+  prose?: 'agent' | 'own';
 }
 
-const { title, description, track, counterpart, type = 'website' } = Astro.props;
+const { title, description, track, counterpart, type = 'website', prose = 'agent' } = Astro.props;
+
 const siteName = 'Christopher James Kites';
 const pageTitle = title ? `${title} | ${siteName}` : siteName;
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -21,7 +25,7 @@ const home = deeper ? '/' : '/technical/';
 ---
 
 <!doctype html>
-<html lang="en" data-track={track}>
+<html lang="en" data-track={track} data-prose={prose}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -102,6 +106,9 @@ const home = deeper ? '/' : '/technical/';
             ◐ System
           </button>
         )}
+        <button type="button" class="theme-toggle" data-spotlight-toggle aria-pressed="false" hidden>
+          ◎ My words
+        </button>
         <a
           href={counterpart}
           class="track-switch"
@@ -117,10 +124,50 @@ const home = deeper ? '/' : '/technical/';
       <slot />
     </main>
     <footer>
+      {prose === 'own' ? (
+        <p data-authorship="own">
+          Written by me, in my own words. <a href="/authorship/">Who wrote what on this site</a>
+        </p>
+      ) : (
+        <p data-authorship="agent">
+          <a href="/authorship/">Written with an AI agent; every claim reviewed by me</a>.
+        </p>
+      )}
       <p>© 2026 Christopher James Kites. Writing and images: All rights reserved.</p>
       <p>Site code: MIT license. <a href="/licenses/">What the licenses mean</a></p>
       {!deeper && <p>This page is the technical telling. Built with Astro, tested with Playwright, hosted on GitHub Pages.</p>}
     </footer>
+    <script is:inline>
+      {
+        // The spotlight: brings my own words forward and sets the rest back.
+        // Its button shows only on a page that has words of mine. Off until
+        // asked for; the choice lasts until the tab closes.
+        const applySpotlight = () => {
+          const root = document.documentElement;
+          const mine = root.dataset.prose === 'own' || document.querySelector('.own-words');
+          const on = sessionStorage.getItem('spotlight') === 'on' && !!mine;
+          if (on) root.dataset.spotlight = 'on';
+          else if (root.dataset.spotlight) root.dataset.spotlight = 'off';
+          document.querySelectorAll('[data-spotlight-toggle]').forEach((b) => {
+            b.hidden = !mine;
+            b.setAttribute('aria-pressed', String(on));
+            b.title = on ? 'Show the whole page evenly again' : 'Bring my own words forward';
+          });
+        };
+        applySpotlight();
+        document.addEventListener('astro:after-swap', applySpotlight);
+        if (!window.spotlightBound) {
+          window.spotlightBound = true;
+          document.addEventListener('click', (event) => {
+            if (!event.target.closest?.('[data-spotlight-toggle]')) return;
+            const on = sessionStorage.getItem('spotlight') === 'on';
+            sessionStorage.setItem('spotlight', on ? 'off' : 'on');
+            if (!document.documentElement.dataset.spotlight) document.documentElement.dataset.spotlight = 'off';
+            requestAnimationFrame(applySpotlight);
+          });
+        }
+      }
+    </script>
   </body>
 </html>
 
@@ -221,6 +268,14 @@ const home = deeper ? '/' : '/technical/';
     padding: 0.1rem 0.7rem;
     cursor: pointer;
   }
+  .theme-toggle:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+  .theme-toggle[aria-pressed='true'] {
+    color: var(--text);
+    border-color: var(--accent);
+  }
   .theme-toggle:hover,
   .theme-toggle:focus-visible {
     color: var(--text);
@@ -263,6 +318,51 @@ const home = deeper ? '/' : '/technical/';
     padding-left: 1rem;
     border-left: 3px solid var(--rule);
     color: var(--muted);
+  }
+  /* A passage in my own words, quoted as I wrote it. */
+  blockquote.own-words {
+    color: var(--text);
+    border-left-color: var(--accent);
+    border-radius: 0 0.4rem 0.4rem 0;
+    padding: 0.1rem 1rem;
+  }
+  .own-words-label {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-bottom: 0;
+  }
+  /* The spotlight: my own words stay at full strength and rise a
+     little; everything else in the page body steps back to the muted color,
+     which keeps a contrast of at least 4.5 to 1 in every theme. Nothing here
+     applies until the root element carries data-spotlight. */
+  html[data-spotlight] main,
+  html[data-spotlight] main a,
+  html[data-spotlight] .own-words {
+    transition: color 400ms ease, background-color 400ms ease, transform 400ms ease, box-shadow 400ms ease;
+  }
+  html[data-spotlight='on']:not([data-prose='own']) main,
+  html[data-spotlight='on']:not([data-prose='own']) main a,
+  html[data-spotlight='on']:not([data-prose='own']) main .panel {
+    color: var(--muted);
+  }
+  html[data-spotlight='on'] main blockquote.own-words,
+  html[data-spotlight='on'] main blockquote.own-words a {
+    color: var(--text);
+  }
+  html[data-spotlight='on'] main blockquote.own-words {
+    background: var(--panel);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgb(0 0 0 / 0.18);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html[data-spotlight] main,
+    html[data-spotlight] main a,
+    html[data-spotlight] .own-words {
+      transition: none;
+    }
+    html[data-spotlight='on'] main blockquote.own-words {
+      transform: none;
+    }
   }
   ol.timeline {
     list-style: none;

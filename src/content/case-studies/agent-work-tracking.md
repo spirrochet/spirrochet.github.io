@@ -2,7 +2,6 @@
 title: Agent Work Tracking
 description: A laboratory that records every session with an AI coding agent, to learn from evidence what works.
 started: 2026-09-05
-status: in progress
 order: 1
 ---
 

@@ -24,6 +24,9 @@ test('the built site follows the checkable style rules', () => {
   const findings: string[] = [];
   for (const file of files) {
     const text = readFileSync(file, 'utf8')
+      // A passage quoted in my own words is my voice as written; it is not
+      // held to rules drawn from my voice. The portability scan still reads it.
+      .replace(/<blockquote class="own-words"[\s\S]*?<\/blockquote>/g, ' ')
       .replace(/<script[\s\S]*?<\/script>/g, '')
       .replace(/<style[\s\S]*?<\/style>/g, '')
       .replace(/<[^>]+>/g, ' ')

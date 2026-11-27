@@ -2,7 +2,6 @@
 title: The Tool I Thought I Was Using
 description: An install that succeeds tells you nothing about whose software you got. How a type checker taught that, and why the list of tools that came out of it was wrong within days.
 started: 2026-10-17
-status: in progress
 order: 3
 ---
 

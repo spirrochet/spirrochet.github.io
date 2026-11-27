@@ -1,6 +1,9 @@
 import { test, expect, type Page } from '@playwright/test';
+import { execFileSync } from 'node:child_process';
+import { statSync } from 'node:fs';
 
 const SITE = 'https://spirrochet.github.io';
+const AGENT_WORDING = 'Written with an AI agent; every claim reviewed by me';
 
 async function crawl(page: Page): Promise<string[]> {
   const seen = new Set<string>();
@@ -52,6 +55,31 @@ test('every page loads, is described, and switches to a page on the other track'
     expect(glued, `${path} has no link or code glued to a neighboring word`).toEqual([]);
     await expect(page.locator('head link[rel="license"]'), `${path} declares its license`).toHaveAttribute('href', '/licenses/');
 
+    // Who wrote the page: one line in the footer, above the license lines.
+    const authorship = page.locator('footer > p[data-authorship]');
+    await expect(authorship, `${path} says who wrote it, once`).toHaveCount(1);
+    const prose = await authorship.getAttribute('data-authorship');
+    expect(await page.locator('html').getAttribute('data-prose'), `${path} marks its prose the same way`).toBe(prose);
+    if (prose === 'agent') {
+      await expect(authorship.locator('a'), `${path} carries the agreed wording`).toHaveText(AGENT_WORDING);
+    } else {
+      expect(prose, `${path} is marked as an agent's draft or as my own words`).toBe('own');
+      await expect(authorship, `${path} is marked as my own words`).toContainText('in my own words');
+    }
+    await expect(authorship.locator('a'), `${path} links to the authorship page`).toHaveAttribute('href', '/authorship/');
+    await expect(authorship, `${path} keeps authorship off the license line`).not.toContainText(/license|rights reserved/i);
+    await expect(page.locator('footer > p').first(), `${path} puts authorship first in the footer`).toHaveAttribute('data-authorship', /.+/);
+    await expect(page.locator('footer > p').nth(1), `${path} puts the license line next`).toContainText('All rights reserved');
+    const unlabeled = await page.locator('blockquote.own-words:not(:has(.own-words-label))').count();
+    expect(unlabeled, `${path} labels every passage in my own words`).toBe(0);
+    // The spotlight's button shows only where the page has words of mine, and it is off unless asked for.
+    const mine = prose === 'own' || (await page.locator('blockquote.own-words').count()) > 0;
+    const spotlight = page.locator('[data-spotlight-toggle]');
+    await expect(spotlight, `${path} has one spotlight button`).toHaveCount(1);
+    if (mine) await expect(spotlight, `${path} offers the spotlight`).toBeVisible();
+    else await expect(spotlight, `${path} hides the spotlight, having none of my words`).toBeHidden();
+    await expect(page.locator('html'), `${path} loads with the spotlight off`).not.toHaveAttribute('data-spotlight', 'on');
+
     const toggle = page.locator('a[data-track-switch]');
     await expect(toggle, `${path} has one track switch`).toHaveCount(1);
     const target = await toggle.getAttribute('href');
@@ -66,12 +94,28 @@ test('the home page introduces me and links to every story', async ({ page }) =>
   await page.goto('/');
   await expect(page.locator('h1')).toContainText('Christopher James Kites');
   await expect(page.locator('#about')).toContainText('seven years away from regular coding');
-  await expect(page.locator('#stories li')).toHaveCount(3);
+  await expect(page.locator('#stories li')).toHaveCount(4);
 });
 
 test('the technical index lists every case study', async ({ page }) => {
   await page.goto('/technical/');
-  await expect(page.locator('#case-studies li')).toHaveCount(3);
+  await expect(page.locator('#case-studies li')).toHaveCount(4);
+});
+
+test('a case study says when it was last updated, from its file, and prints no status', async ({ page }) => {
+  await page.goto('/technical/');
+  const links = await page.locator('#case-studies li a').evaluateAll((anchors) => anchors.map((a) => a.getAttribute('href')!));
+  expect(links.length).toBeGreaterThanOrEqual(4);
+  for (const href of links) {
+    await page.goto(href);
+    const eyebrow = page.locator('article .eyebrow');
+    await expect(eyebrow, `${href} prints no status`).not.toContainText(/in progress|complete/i);
+    await expect(eyebrow, `${href} says when it was last updated`).toContainText('last updated');
+    const file = `src/content/case-studies/${href.split('/').filter(Boolean).pop()}.md`;
+    const committed = execFileSync('git', ['log', '-1', '--format=%cs', '--', file], { encoding: 'utf8' }).trim();
+    const expected = committed || statSync(file).mtime.toISOString().slice(0, 10);
+    await expect(eyebrow.locator('time'), `${href} shows its file's newest date`).toHaveAttribute('datetime', expected);
+  }
 });
 
 test('an unknown path returns the custom 404 page', async ({ page }) => {
@@ -174,12 +218,121 @@ test('stories link to the previous and next story', async ({ page }) => {
   await expect(page.locator('a[rel="prev"]')).toHaveAttribute('href', '/stories/agent-work-tracking/');
   await page.locator('a[rel="next"]').click();
   await expect(page).toHaveURL(/\/stories\/what-did-the-agent-just-install\/$/);
+  await page.locator('a[rel="next"]').click();
+  await expect(page).toHaveURL(/\/stories\/when-the-agent-printed-a-secret\/$/);
   await expect(page.locator('a[rel="next"]')).toHaveCount(0);
 });
 
 test('the plain footer explains the licenses on the site, not off it', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('footer a')).toHaveAttribute('href', '/licenses/');
-  await page.locator('footer a').click();
+  const licenses = page.locator('footer a[href="/licenses/"]');
+  await expect(licenses).toHaveCount(1);
+  await licenses.click();
   await expect(page.locator('h1')).toContainText('What You May Do With This Site');
+});
+
+test('the authorship page is reachable from the footer and marks my own words', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('footer').getByRole('link', { name: AGENT_WORDING }).click();
+  await expect(page).toHaveURL(/\/authorship\/$/);
+  await expect(page.locator('h1')).toContainText('Who Wrote What');
+  expect(await page.locator('blockquote.own-words').count()).toBeGreaterThanOrEqual(1);
+  await expect(page.locator('a[data-track-switch]')).toHaveAttribute('href', '/technical/how-this-site-is-built/#authorship');
+});
+
+// WCAG 2 contrast ratio between two CSS colors, as the browser computed them.
+const contrast = (a: string, b: string) => {
+  const luminance = (color: string) => {
+    const [r, g, bl] = color.match(/[\d.]+/g)!.slice(0, 3).map((v) => {
+      const c = Number(v) / 255;
+      return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * bl;
+  };
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
+};
+
+test('the spotlight button brings my words forward, remembers the choice, and turns off again', async ({ page }) => {
+  await page.goto('/authorship/');
+  const html = page.locator('html');
+  const button = page.locator('[data-spotlight-toggle]');
+  await expect(button).toHaveAttribute('aria-pressed', 'false');
+  await button.click();
+  await expect(html).toHaveAttribute('data-spotlight', 'on');
+  await expect(button).toHaveAttribute('aria-pressed', 'true');
+
+  await page.goto('/case-studies/the-token-in-the-chat/');
+  await expect(page.locator('html'), 'the choice carries to another page with my words').toHaveAttribute('data-spotlight', 'on');
+  await page.goto('/');
+  await expect(page.locator('html'), 'a page with none of my words is never dimmed').not.toHaveAttribute('data-spotlight', 'on');
+  await expect(page.locator('[data-spotlight-toggle]')).toBeHidden();
+
+  await page.goto('/authorship/');
+  await page.locator('[data-spotlight-toggle]').click();
+  await expect(page.locator('html')).toHaveAttribute('data-spotlight', 'off');
+  await expect(page.locator('[data-spotlight-toggle]')).toHaveAttribute('aria-pressed', 'false');
+});
+
+// The spotlight's styles apply when the root element carries data-spotlight.
+// The tests below set that attribute by hand, to read colors and motion.
+for (const scheme of ['light', 'dark'] as const) {
+  test(`with the spotlight on, dimmed text keeps its contrast and my words keep theirs (${scheme})`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme: scheme, reducedMotion: 'reduce' });
+    await page.goto('/authorship/');
+    const read = () =>
+      page.evaluate(() => {
+        const color = (el: Element | null) => getComputedStyle(el!).color;
+        return {
+          background: getComputedStyle(document.body).backgroundColor,
+          rest: color(document.querySelector('main > p')),
+          link: color(document.querySelector('main a') ?? document.querySelector('main > p')),
+          mine: color(document.querySelector('blockquote.own-words p:not(.own-words-label)')),
+          mineBackground: getComputedStyle(document.querySelector('blockquote.own-words')!).backgroundColor,
+        };
+      });
+    const before = await read();
+    await page.evaluate(() => (document.documentElement.dataset.spotlight = 'on'));
+    const after = await read();
+    expect(after.rest, 'the rest steps back').not.toBe(before.rest);
+    expect(after.mine, 'my words stay at full strength').toBe(before.mine);
+    expect(contrast(after.rest, after.background), 'dimmed text').toBeGreaterThanOrEqual(4.5);
+    expect(contrast(after.link, after.background), 'dimmed link').toBeGreaterThanOrEqual(4.5);
+    expect(contrast(after.mine, after.mineBackground), 'my words').toBeGreaterThanOrEqual(4.5);
+  });
+}
+
+test('with the spotlight on, dimmed text keeps its contrast on the technical track', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/technical/');
+  await page.evaluate(() => (document.documentElement.dataset.spotlight = 'on'));
+  const colors = await page.evaluate(() => ({
+    background: getComputedStyle(document.body).backgroundColor,
+    rest: getComputedStyle(document.querySelector('main p.lede')!).color,
+    link: getComputedStyle(document.querySelector('main a')!).color,
+  }));
+  expect(contrast(colors.rest, colors.background)).toBeGreaterThanOrEqual(4.5);
+  expect(contrast(colors.link, colors.background)).toBeGreaterThanOrEqual(4.5);
+});
+
+test('the spotlight moves my words only for a reader who has not asked for reduced motion', async ({ page }) => {
+  const motion = () =>
+    page.evaluate(() => {
+      const mine = getComputedStyle(document.querySelector('blockquote.own-words')!);
+      return { transform: mine.transform, duration: mine.transitionDuration, main: getComputedStyle(document.querySelector('main')!).transitionDuration };
+    });
+  const durations = (value: string) => value.split(',').map((part) => parseFloat(part));
+
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/authorship/');
+  await page.evaluate(() => (document.documentElement.dataset.spotlight = 'on'));
+  const reduced = await motion();
+  expect(reduced.transform, 'no rise').toBe('none');
+  expect(Math.max(...durations(reduced.duration), ...durations(reduced.main)), 'no transition').toBe(0);
+
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/authorship/');
+  await page.evaluate(() => (document.documentElement.dataset.spotlight = 'on'));
+  await expect.poll(async () => (await motion()).transform, { message: 'my words rise' }).not.toBe('none');
+  expect(Math.max(...durations((await motion()).duration))).toBeGreaterThan(0);
 });
